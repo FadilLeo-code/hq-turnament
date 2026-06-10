@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ShieldAlert, KeyRound, Mail, ArrowRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 export default function AdminLogin() {
@@ -20,7 +21,8 @@ export default function AdminLogin() {
     setError("");
 
     try {
-      const response = await fetch("${baseUrl}/api/login", {
+      // PERBAIKAN DI SINI: Menggunakan backtick ( ` ) bukan kutip dua ( " )
+      const response = await fetch(`${baseUrl}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
