@@ -6,6 +6,7 @@ import AdminSidebar from "../../../components/AdminSidebar";
 import { Trophy, Users, Gamepad2, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import useSWR from "swr";
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 // SWR Fetcher dengan penyertaan Token Sanctum
 const fetcher = (url: string) => fetch(url, { headers: { "Authorization": `Bearer ${localStorage.getItem("admin_token")}` } }).then((res) => res.json());
@@ -15,7 +16,7 @@ export default function AdminDashboard() {
   const [adminName, setAdminName] = useState("");
 
   // Tarik data statistik secara realtime
-  const { data: statsResponse, isLoading } = useSWR("http://127.0.0.1:8000/api/dashboard/stats", fetcher);
+  const { data: statsResponse, isLoading } = useSWR("${baseUrl}/api/dashboard/stats", fetcher);
   const stats = statsResponse?.data;
 
   // Pengecekan Keamanan Identitas

@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { Trophy, X, Save, ArrowLeft, Shuffle, CheckCircle2, Crown } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 interface Tournament { id: number; name: string; status: string; max_teams: number; game: any; matches: any[]; teams: any[]; }
 
@@ -29,7 +30,7 @@ export default function TournamentArena() {
   const showToast = (message: string) => { setToast({ show: true, message }); setTimeout(() => setToast({ show: false, message: "" }), 3000); };
 
   const fetchBracketData = () => {
-    fetch(`http://127.0.0.1:8000/api/tournaments/${id}/bracket`)
+    fetch(`${baseUrl}/api/tournaments/${id}/bracket`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -49,7 +50,7 @@ export default function TournamentArena() {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("admin_token");
-      const response = await fetch(`http://127.0.0.1:8000/api/tournaments/${id}/generate-bracket`, { 
+      const response = await fetch(`${baseUrl}/api/tournaments/${id}/generate-bracket`, { 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +67,7 @@ export default function TournamentArena() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/teams/register", {
+      const response = await fetch("${baseUrl}/api/teams/register", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tournament_id: id, name: teamName, logo_url: logoUrl, players: formPlayers })
       });
@@ -80,7 +81,7 @@ export default function TournamentArena() {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("admin_token");
-      const response = await fetch(`http://127.0.0.1:8000/api/matches/${selectedMatch.id}/score`, {
+      const response = await fetch(`${baseUrl}/api/matches/${selectedMatch.id}/score`, {
         method: 'PUT', 
         headers: { 
           'Content-Type': 'application/json',

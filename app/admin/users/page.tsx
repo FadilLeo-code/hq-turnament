@@ -5,6 +5,7 @@ import AdminSidebar from "../../../components/AdminSidebar";
 import { Plus, Trash2, Search, Filter, Download, User, X, CheckCircle2, ChevronLeft, ChevronRight, Eye, Edit3 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSWR from "swr";
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 interface Staff { id: number; name: string; email: string; status: string; created_at: string; avatar_url: string; }
 interface PaginatedResponse { data: Staff[]; meta: { current_page: number; last_page: number; total: number; per_page: number; }; success: boolean; }
@@ -17,7 +18,7 @@ export default function ManageStaff() {
   const [sortCol, setSortCol] = useState("created_at");
   const [sortDir, setSortDir] = useState("desc");
 
-  const apiUrl = `http://127.0.0.1:8000/api/users?page=${page}&search=${search}&sort=${sortCol}&direction=${sortDir}`;
+  const apiUrl = `${baseUrl}/api/users?page=${page}&search=${search}&sort=${sortCol}&direction=${sortDir}`;
   const { data: responseData, error, isLoading, mutate } = useSWR<PaginatedResponse>(apiUrl, fetcher, { keepPreviousData: true });
 
   const users = responseData?.data || [];
@@ -54,7 +55,7 @@ export default function ManageStaff() {
   const handleBulkDelete = async () => {
     if (!confirm(`Are you sure you want to delete ${selectedIds.length} personnel?`)) return;
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/users/bulk-delete", {
+      const res = await fetch("${baseUrl}/api/users/bulk-delete", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("admin_token")}` },
         body: JSON.stringify({ ids: selectedIds })
@@ -84,7 +85,7 @@ export default function ManageStaff() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const url = activeModal === "create" ? "http://127.0.0.1:8000/api/users" : `http://127.0.0.1:8000/api/users/${selectedUser?.id}`;
+      const url = activeModal === "create" ? "${baseUrl}/api/users" : `${baseUrl}/api/users/${selectedUser?.id}`;
       const method = activeModal === "create" ? "POST" : "PUT";
       
       const payload: any = { name: formData.name, email: formData.email, role: formData.role };

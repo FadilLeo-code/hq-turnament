@@ -6,6 +6,7 @@ import { Search, Filter, Trash2, X, CheckCircle2, ChevronLeft, ChevronRight, Edi
 import { motion, AnimatePresence } from "framer-motion";
 import useSWR from "swr";
 import Link from "next/link";
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 interface Player { id: number; in_game_name: string; default_role: string; }
 interface Team { id: number; name: string; logo_url: string; created_at: string; players: Player[]; }
@@ -19,7 +20,7 @@ export default function ManageTeams() {
   const [sortCol, setSortCol] = useState("created_at");
   const [sortDir, setSortDir] = useState("desc");
 
-  const apiUrl = `http://127.0.0.1:8000/api/teams?page=${page}&search=${search}&sort=${sortCol}&direction=${sortDir}`;
+  const apiUrl = `${baseUrl}/api/teams?page=${page}&search=${search}&sort=${sortCol}&direction=${sortDir}`;
   const { data: responseData, error, isLoading, mutate } = useSWR<PaginatedResponse>(apiUrl, fetcher, { keepPreviousData: true });
 
   const teams = responseData?.data || [];
@@ -48,7 +49,7 @@ export default function ManageTeams() {
     if (!selectedTeam) return;
     setIsSubmitting(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/teams/${selectedTeam.id}`, {
+      const res = await fetch(`${baseUrl}/api/teams/${selectedTeam.id}`, {
         method: "PUT", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("admin_token")}` },
         body: JSON.stringify({ name: editName, logo_url: editLogo })
       });
@@ -60,7 +61,7 @@ export default function ManageTeams() {
   const handleDelete = async (id: number, name: string) => {
     if (!confirm(`Hapus permanen tim "${name}" beserta profil para pemainnya? Data yang dihapus tidak dapat dikembalikan.`)) return;
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/teams/${id}`, { method: "DELETE", headers: { "Authorization": `Bearer ${localStorage.getItem("admin_token")}` }});
+      const res = await fetch(`${baseUrl}/api/teams/${id}`, { method: "DELETE", headers: { "Authorization": `Bearer ${localStorage.getItem("admin_token")}` }});
       const result = await res.json();
       if (result.success) { showToast(result.message); mutate(); }
     } catch (err) { alert("Delete failed"); }

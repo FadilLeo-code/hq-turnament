@@ -5,6 +5,7 @@ import AdminSidebar from "../../../components/AdminSidebar";
 import { Plus, Trash2, Gamepad2, X, CheckCircle2, Layers, Edit3, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSWR from "swr"; 
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 // 1. STRICT TYPESCRIPT INTERFACES
 interface GameSystem { 
@@ -26,7 +27,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function MasterGames() {
   const [page, setPage] = useState(1);
   const { data: responseData, error, isLoading, mutate } = useSWR<PaginatedResponse>(
-    `http://127.0.0.1:8000/api/games?page=${page}`, 
+    `${baseUrl}/api/games?page=${page}`,
     fetcher
   );
 
@@ -74,7 +75,7 @@ export default function MasterGames() {
 
     try {
       const token = localStorage.getItem("admin_token");
-      const url = activeModal === "create" ? "http://127.0.0.1:8000/api/games" : `http://127.0.0.1:8000/api/games/${selectedGame?.id}`;
+      const url = activeModal === "create" ? "${baseUrl}/api/games" : `${baseUrl}/api/games/${selectedGame?.id}`;
       const method = activeModal === "create" ? "POST" : "PUT";
 
       const res = await fetch(url, {
@@ -96,7 +97,7 @@ export default function MasterGames() {
     if (!confirm("Hapus sistem game ini? Ini akan berdampak fatal jika ada turnamen berjalan yang menggunakan game ini!")) return;
     try {
       const token = localStorage.getItem("admin_token");
-      const res = await fetch(`http://127.0.0.1:8000/api/games/${id}`, {
+      const res = await fetch(`${baseUrl}/api/games/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });

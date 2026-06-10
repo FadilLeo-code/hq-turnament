@@ -24,7 +24,7 @@ export default function AdminSidebar() {
     const token = localStorage.getItem("admin_token");
     if (token) {
       try {
-        await fetch("http://127.0.0.1:8000/api/logout", {
+        await fetch("${baseUrl}/api/logout", {
           method: "POST", headers: { "Authorization": `Bearer ${token}` }
         });
       } catch (err) { console.error("API Logout Failed"); }

@@ -6,6 +6,7 @@ import { Trash2, Search, Filter, Download, X, CheckCircle2, ChevronLeft, Chevron
 import { motion, AnimatePresence } from "framer-motion";
 import useSWR from "swr";
 import Link from "next/link";
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 interface Game { id: number; name: string; }
 interface Tournament { id: number; name: string; status: string; max_teams: number; created_at: string; game: Game; teams: any[]; }
@@ -19,7 +20,7 @@ export default function ManageTournaments() {
   const [sortCol, setSortCol] = useState("created_at");
   const [sortDir, setSortDir] = useState("desc");
 
-  const apiUrl = `http://127.0.0.1:8000/api/tournaments?page=${page}&search=${search}&sort=${sortCol}&direction=${sortDir}`;
+  const apiUrl = `${baseUrl}/api/tournaments?page=${page}&search=${search}&sort=${sortCol}&direction=${sortDir}`;
   const { data: responseData, error, isLoading, mutate } = useSWR<PaginatedResponse>(apiUrl, fetcher, { keepPreviousData: true });
 
   const tournaments = responseData?.data || [];
@@ -54,7 +55,7 @@ export default function ManageTournaments() {
     setIsSubmitting(true);
     
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/tournaments/${selectedTournament.id}`, {
+      const res = await fetch(`${baseUrl}/api/tournaments/${selectedTournament.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("admin_token")}` },
         body: JSON.stringify({ name: editName, status: editStatus })
@@ -71,7 +72,7 @@ export default function ManageTournaments() {
   const handleDelete = async (id: number, name: string) => {
     if (!confirm(`DANGER ZONE: Hapus total turnamen "${name}" beserta seluruh bagan dan tim yang sudah mendaftar?`)) return;
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/tournaments/${id}`, {
+      const res = await fetch(`${baseUrl}/api/tournaments/${id}`, {
         method: "DELETE", headers: { "Authorization": `Bearer ${localStorage.getItem("admin_token")}` }
       });
       const result = await res.json();
