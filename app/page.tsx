@@ -32,8 +32,8 @@ export default function TournamentLobby() {
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:8000/api/tournaments?all=true").then(res => res.json()),
-      fetch("http://localhost:8000/api/games").then(res => res.json())
+      fetch("https://api.leoviniacode.my.id/api/tournaments?all=true").then(res => res.json()),
+      fetch("https://api.leoviniacode.my.id/api/games").then(res => res.json())
     ]).then(([tournamentsData, gamesData]) => {
       if (tournamentsData.success) setTournaments(tournamentsData.data);
       if (gamesData.success) {
@@ -63,7 +63,7 @@ export default function TournamentLobby() {
     try {
       const token = localStorage.getItem("admin_token"); 
 
-      const response = await fetch("http://localhost:8000/api/tournaments", {
+      const response = await fetch("https://api.leoviniacode.my.id/api/tournaments", {
         method: "POST", 
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ name: newTourneyName, game_id: parseInt(selectedGameId), team_count: parseInt(teamCount) })
